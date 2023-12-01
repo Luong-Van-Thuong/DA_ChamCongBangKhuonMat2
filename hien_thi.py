@@ -10,7 +10,7 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 recognizer = cv2.face_LBPHFaceRecognizer.create()
 #recognizer.read("huanluyen/huanluyen.yml")
 recognizer.read("detect person/trainer/face_trainner.yml")
-dataChamCong = sqlite3.connect("D:/Python/Python_DA5/DataChamCong.db")  
+# dataChamCong = sqlite3.connect("D:/Python/Python_DA5/DataChamCong.db")  
 
 try:
     # Đọc dữ liệu từ trong file Traning 
@@ -48,18 +48,18 @@ def luuThoiGianChamCong(id, name):
     print("a:", a)
     print("b:", b)
     # Lưu dữ liệu vào trong SQL
-    query = "INSERT INTO ChamCong(ID, Name, ThoiGian, NgayThangNam) VALUES (?, ?, ?, ?)"
-    dataChamCong.execute(query, (id, name, a, b))
-    dataChamCong.commit()  # Thêm dòng này để xác nhận thay đổi
-    dataChamCong.close()  # Đóng kết nối           
+    # query = "INSERT INTO ChamCong(ID, Name, ThoiGian, NgayThangNam) VALUES (?, ?, ?, ?)"
+    # dataChamCong.execute(query, (id, name, a, b))
+    # dataChamCong.commit()  # Thêm dòng này để xác nhận thay đổi
+    # dataChamCong.close()  # Đóng kết nối           
     print("Thêm thông tin người dùng thành công.") 
 # luuThoiGianChamCong()
 # Hàm tìm kiến thông tin của người dùng
-def searchID(id):
-    cursor = dataChamCong.cursor()
-    cursor.execute("SELECT * FROM Person WHERE ID=?", (id,))
-    result = cursor.fetchall()
-    return result
+# def searchID(id):
+#     cursor = dataChamCong.cursor()
+#     cursor.execute("SELECT * FROM Person WHERE ID=?", (id,))
+#     result = cursor.fetchall()
+#     return result
 
 cap = cv2.VideoCapture(0)
 font = cv2.FONT_HERSHEY_COMPLEX
@@ -80,7 +80,7 @@ while True:
             if profile != None:
                 # Lấy dữ liệu từ trong SQL id được lưu trước tên
                 cv2.putText(img, ""+str(profile[1]), (x+10, y), font, 1, (0,255,0), 1);
-                luuThoiGianChamCong(profile[0], profile[1])
+                # luuThoiGianChamCong(profile[0], profile[1])
                 print("Chấm công thành công")
         else:
             cv2.putText(img, "Unknown", (x, y + h + 30), font, 0.4, (0, 255, 0), 1);

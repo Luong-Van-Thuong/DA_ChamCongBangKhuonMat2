@@ -47,12 +47,89 @@ def QuetKhuonMat(user_name, user_id):
         cv2.waitKey(300)  # Delay 300 milliseconds between frames
     print("Quá trình lưu ảnh kết thúc.")
 
+def taoSQLCho1Nguoi():
+    # Nhập tên người dùng và ID từ người dùng
+    username = input("Nhập tên người dùng: ")
+    user_id = input("Nhập ID người dùng: ")
+
+    # Kết hợp tên và ID để tạo tên cơ sở dữ liệu
+    db_name = f"{username}_{user_id}"
+    # Kết nối đến cơ sở dữ liệu SQLite
+    conn = sqlite3.connect(db_name + '.db')
+
+    # Tạo một đối tượng cursor từ kết nối
+    cursor = conn.cursor()
+    # Tạo bảng trong cơ sở dữ liệu
+    cursor.execute(f'''
+        CREATE TABLE IF NOT EXISTS {db_name}(
+            user_id INTEGER,
+            username TEXT,
+            thoigian TEXT,
+            ngaythangnam TEXT
+        );
+    ''')
+    # Thoi gian hien tai
+    thoi_gian_hien_tai = datetime.now()
+    # Lay thoi gian thong tin ve gio, phut, ngay, thang, nam
+    gio = thoi_gian_hien_tai.hour
+    phut = thoi_gian_hien_tai.minute
+    ngay = thoi_gian_hien_tai.day
+    thang = thoi_gian_hien_tai.month
+    nam = thoi_gian_hien_tai.year
+    # Tạo biến a và b
+    if 0 < gio < 10:
+        gio = f"0{gio}"
+    if 0 < phut < 10:
+        phut = f"0{phut}"
+    thoigian = f"{gio}:{phut}"
+    ngaythangnam = f"{ngay}/{thang}/{nam}"
+    # In giá trị của a và b
+    print("thoigian:", thoigian)
+    print("ngaythangnam:", ngaythangnam)    
+    # Thêm người dùng mới vào bảng
+    cursor.execute(f"INSERT INTO {db_name} (user_id, username, thoigian, ngaythangnam) VALUES (?, ?, ?, ?)", (user_id, username, thoigian, ngaythangnam))
+    # Lưu thay đổi và đóng kết nối
+    conn.commit()
+    conn.close()
+    print(f"Cơ sở dữ liệu '{db_name}.db' đã được tạo và người dùng đã được thêm vào.")
+# Them du lieu nguoi dung cham cong
+def chamcong(id):
+    # Thoi gian hien tai
+    thoi_gian_hien_tai = datetime.now()
+    # Lay thoi gian thong tin ve gio, phut, ngay, thang, nam
+    gio = thoi_gian_hien_tai.hour
+    phut = thoi_gian_hien_tai.minute
+    ngay = thoi_gian_hien_tai.day
+    thang = thoi_gian_hien_tai.month
+    nam = thoi_gian_hien_tai.year
+    # Tạo biến a và b
+    if 0 < gio < 10:
+        gio = f"0{gio}"
+    if 0 < phut < 10:
+        phut = f"0{phut}"
+    thoigian = f"{gio}:{phut}"
+    ngaythangnam = f"{ngay}/{thang}/{nam}"
+    ids = searchIDataChamCong(id)
+    user_id = ids[0][0]
+    username = ids[0][1]
+    db_name = f"{username}_{user_id}"
+    conn = sqlite3.connect(db_name + '.db')
+    cursor = conn.cursor()
+    # Thêm người dùng mới vào bảng
+    cursor.execute(f"INSERT INTO {db_name} (user_id, username, thoigian, ngaythangnam) VALUES (?, ?, ?, ?)", (user_id, username, thoigian, ngaythangnam))
+    # Lưu thay đổi và đóng kết nối
+    conn.commit()
+    conn.close()
+    print(f"Chấm công hoàn thành.")    
+
+
+
 def ThemThongTin(id):
     if not KiemTraId(id):
         print(f"Không có {id}")
         user_name = input("Nhập Name: ")
         name = remove_accent(user_name.capitalize())
-        QuetKhuonMat(name, id)
+        # QuetKhuonMat(name, id)
         query = "INSERT INTO Person(ID, Name) VALUES (?, ?)"
         conn.execute(query, (id, name))
         conn.commit()  # Thêm dòng này để xác nhận thay đổi
@@ -83,21 +160,29 @@ def XoaThongTin(id):
         print(f"Không tìm thấy người dùng với ID {id}.")
 
 
-# Hàm tìm kiến thông tin của người dùng
-def searchID(id):
+# Hàm tìm kiến thông tin của người dùng trong cơ sở dữ liệu DULIEUNGUOIDUNG.DB
+def searchIDataChamCong(id):
+    conn = sqlite3.connect("D:/Python/Python_DA5/DuLieuNguoiDung.db") 
     cursor = conn.cursor()
     # id = input("Nhap ID: ")
     cursor.execute("SELECT * FROM Person WHERE ID=?", (id,))
     result = cursor.fetchall()
-    # if result:
-    #     print("Kết quả tìm kiếm:")
-    #     for row in result:
-    #         print(f"ID: {row[0]}, Name: {row[1]}")
-    # else:
-    #     print("Không tìm thấy kết quả.")
-    # conn.close()
+    conn.close()
     return result
-
+# Hàm tìm kiếm thông tin trong cơ sở dữ liệu được tạo từ TÊN NGƯỜI DÙNG VÀ ID THUONG.1.DB......
+def searchID(id):
+    ids = searchIDataChamCong(id)
+    idss = ids[0][0]
+    names = ids[0][1]
+    db_name = f"{names}_{idss}"
+    conn = sqlite3.connect(db_name + '.db')
+    cursor = conn.cursor()
+    # id = input("Nhap ID: ")
+    # Chọn tất cả cả dữ liệu có id cần tìm kiếm
+    cursor.execute(f"SELECT * FROM {db_name} WHERE user_id=?", (id,))
+    result = cursor.fetchall()
+    conn.close()
+    return result
 def searchName(name):
     cursor = conn.cursor()
     # name = input("Nhap Name: ")
@@ -146,6 +231,7 @@ def thoi_Gian():
     nam = thoi_gian_hien_tai.year
     print(f"Thời gian nhập thông tin: {gio}:{phut} Ngày {ngay}/{thang}/{nam}")
 
+# Nhập id 
 while True:
     try:
         user_input = input("Nhập id: ")
@@ -153,11 +239,13 @@ while True:
         break
     except ValueError:
         print("Vui lòng chỉ nhập id là số")
-
-# ids = searchID(id)
+# result = searchIDataChamCong(id)
+# print(result)
+ids = searchID(id)
+print(ids)
 # for row in ids:
-#     print(f"ID: {row[0]}, Name: {row[1]}")
-# name = ids[0][1]
+#     print(f"ID: {row[0]}, Name: {row[1]}, Time: {row[2]}, Date: {row[3]}")
+
 # print("Name: " + name)
 # id = input("Nhập name: ")
 # ids = searchName(id)
@@ -165,7 +253,9 @@ while True:
 #     print(f"ID: {row[0]}, Name: {row[1]}")
 # ThemThongTin(id)
 # XoaThongTin(id)
-CapNhat(id)
+# CapNhat(id)
 # thoi_Gian()
+# taoSQLCho1Nguoi()
+# chamcong(id)
 
 
