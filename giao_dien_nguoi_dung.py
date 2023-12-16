@@ -71,7 +71,7 @@ def themMoiNhanVien():
         conn.close()  # Đóng kết nối           
         print("Thêm thông tin người dùng thành công.")    
     else:
-        print("Có " + id)
+        print("Có " + str(id))
 
 
 def trainning():
