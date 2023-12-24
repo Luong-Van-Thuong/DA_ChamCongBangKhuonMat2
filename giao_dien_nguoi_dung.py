@@ -6,12 +6,13 @@ import pickle, sqlite3
 import cv2
 from PIL import Image
 from datetime import datetime
+import pandas as pd
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 # Tạo thư mục lưu ảnh nếu chưa tồn tại
 face_images_folder = 'D:/Python/Python_DA5/face_images_folder'
 # Thêm thông tin người dùng vào cơ sở dữ liệu
-conn = sqlite3.connect("D:/Python/Python_DA5/DuLieuNguoiDung.db")  
+conn = sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\DuLieuNguoiDung.db")  
 cursor = conn.cursor()
 cursor.execute(f'''
     CREATE TABLE IF NOT EXISTS Person(
@@ -19,7 +20,7 @@ cursor.execute(f'''
         Name TEXT
     );
 ''')
-conn1 = sqlite3.connect("D:/Python/Python_DA5/test01.db")
+conn1 = sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\test01.db") 
 cursor1 = conn1.cursor()
 cursor1.execute(f'''
     CREATE TABLE IF NOT EXISTS test(
@@ -71,7 +72,7 @@ def themMoiNhanVien():
         conn.close()  # Đóng kết nối           
         print("Thêm thông tin người dùng thành công.")    
     else:
-        print("Có " + str(id))
+        print("Có id " + str(id) + " trong danh sách rồi")
 
 
 def trainning():
@@ -109,22 +110,22 @@ def chamCong():
     except cv2.error as e:
         print(f"OpenCV Error: {e}")
     def getProfile(Id):
-        conn = sqlite3.connect("D:/Python/Python_DA5/DuLieuNguoiDung.db") 
-        query="SELECT * FROM Person WHERE ID="+str(Id)
-        cursor=conn.execute(query)
-        profile=None
-        for row in cursor:
-            profile=row
-        conn.close()
+        # conn = sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\DuLieuNguoiDung.db")  
+        with sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\DuLieuNguoiDung.db") as conn:
+            query="SELECT * FROM Person WHERE ID="+str(Id)
+            cursor=conn.execute(query)
+            profile=None
+            for row in cursor:
+                profile=row
         return profile
     # Lấy thông in nhân viên thông qua id
     def searchIDataChamCong(id):
-        conn = sqlite3.connect("D:/Python/Python_DA5/DuLieuNguoiDung.db") 
-        cursor = conn.cursor()
-        # id = input("Nhap ID: ")
-        cursor.execute("SELECT * FROM Person WHERE ID=?", (id,))
-        result = cursor.fetchall()
-        conn.close()
+        # conn = sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\DuLieuNguoiDung.db")  
+        with sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\DuLieuNguoiDung.db") as conn:
+            cursor = conn.cursor()
+            # id = input("Nhap ID: ")
+            cursor.execute("SELECT * FROM Person WHERE ID=?", (id,))
+            result = cursor.fetchall()
         return result
     def luuThoiGianChamCong(id):
         # Thoi gian hien tai
@@ -147,8 +148,14 @@ def chamCong():
         username = ids[0][1]
         db_name = f"test01"
         db_name_table = f"test"
-        conn = sqlite3.connect(db_name + '.db')
+        # conn = sqlite3.connect(db_name + '.db')
+        conn = sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\test01.db") 
         cursor = conn.cursor()
+
+        # Truy vấn dữ liệu từ bảng 'test'
+        query = "SELECT * FROM test"
+        df = pd.read_sql_query(query, conn)
+        df.to_excel('test01.xlsx', index=False) 
         # cursor.execute(f"INSERT INTO {db_name} (user_id, username, thoigian, ngaythangnam) VALUES (?, ?, ?, ?)", (user_id, username, thoigian, ngaythangnam))
         cursor.execute(f"INSERT INTO {db_name_table} (id, name, thoigian, ngaythangnam) VALUES (?, ?, ?, ?)", (user_id, username, thoigian, ngaythangnam))
         conn.commit()
@@ -170,7 +177,7 @@ def chamCong():
             # Neu dung thi 
             if conf < 90:   
                 profile=getProfile(nbr_predicted)
-                if profile != None:
+                if profile is not None:
                     # Lấy dữ liệu từ trong SQL id được lưu trước tên
                     cv2.putText(img, ""+str(profile[1]) + str(profile[0]), (x+10, y), font, 1, (0,255,0), 1)
                     # luuThoiGianChamCong(profile[0], profile[1])
@@ -189,9 +196,6 @@ def chamCong():
         print("CHẤM CÔNG KHÔNG THÀNH CÔNG")
     cap.release()
     cv2.destroyAllWindows()
-
-
-
 
 
 # Thực hiện hàm chạy 

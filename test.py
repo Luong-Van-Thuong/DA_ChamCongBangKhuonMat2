@@ -1,6 +1,8 @@
 import sqlite3
 from datetime import datetime, timedelta
-conn = sqlite3.connect("D:/Python/Python_DA5/test01.db") 
+# conn = sqlite3.connect("D:/Python/Python_DA5/test01.db") 
+# D:\DO AN 5\DOAN5_02\app\src\main\assets\test01.db
+conn = sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\test01.db") 
 def themtt():
     while True:
         user_input = input("Nhập id: ")
@@ -38,8 +40,8 @@ def hienthi():
 
     # Đóng kết nối
     conn.close()
-# themtt()
-hienthi()
+themtt()
+# hienthi()
 
 
 

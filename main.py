@@ -388,13 +388,13 @@ def KiemTraThoiGianLamTungNgay(id):
 
 # Nhập id 
             
-# while True:
-#     try:
-#         user_input = input("Nhập id: ")
-#         id = int(user_input)
-#         break
-#     except ValueError:
-#          print("Lỗi nhập lại id")
+while True:
+    try:
+        user_input = input("Nhập id: ")
+        id = int(user_input)
+        break
+    except ValueError:
+         print("Lỗi nhập lại id")
 # Lấy toàn bộ dữ liệu từ bảng Person
 # cursor.execute('SELECT * FROM Person')
 # rows = cursor.fetchall()
@@ -414,11 +414,11 @@ def KiemTraThoiGianLamTungNgay(id):
 # print(result)
 
 # print(data[0])
-# ids = searchID(1)
-# print(ids)
+ids = searchID(1)
+print(ids)
 # for row in ids:
 #     print(f"ID: {row[0]}, Name: {row[1]}, Time: {row[2]}, Date: {row[3]}")
-    # print(f"Ngày chấm công: {row[3]}")
+#     print(f"Ngày chấm công: {row[3]}")
 
 # print("Name: " + name)
 # id = input("Nhập name: ")
