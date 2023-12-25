@@ -40,8 +40,24 @@ def hienthi():
 
     # Đóng kết nối
     conn.close()
-themtt()
-# hienthi()
+def xoa():
+    # Kết nối đến cơ sở dữ liệu
+    conn = sqlite3.connect(r"D:\DO AN 5\DOAN5_02\app\src\main\assets\test01.db")
+
+    # Tạo một đối tượng Cursor
+    cursor = conn.cursor()
+
+    # Sử dụng câu lệnh SQL DELETE để xóa toàn bộ dữ liệu trong bảng
+    cursor.execute("DELETE FROM test")
+
+    # Lưu thay đổi
+    conn.commit()
+
+    # Đóng kết nối
+    conn.close()
+# themtt()
+hienthi()
+# xoa()
 
 
 
