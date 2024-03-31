@@ -1,26 +1,26 @@
 import sqlite3
-
-# Kết nối đến cơ sở dữ liệu
-conn = sqlite3.connect("D:/Python/Python_DA5/DuLieuNguoiDung.db")  
-cursor = conn.cursor()
-
-# Tạo bảng (nếu chưa tồn tại)
-cursor.execute('''
+import os
+file_sql = "DuLieuNguoiDung.db"
+current_directory = os.getcwd()
+datafile = os.path.join(current_directory, file_sql)
+ketNoiData = sqlite3.connect(datafile)
+cursor = ketNoiData.cursor()
+cursor.execute(f'''
     CREATE TABLE IF NOT EXISTS Person(
         ID INTEGER,
         Name TEXT
     );
 ''')
+# Thực thi truy vấn để lấy dữ liệu từ bảng Person
+cursor.execute("SELECT * FROM Person")
 
-# Nhập dữ liệu từ người dùng
-user_id = int(input("Nhập ID: "))
-user_name = input("Nhập tên: ")
+# Lấy tất cả các dòng dữ liệu
+rows = cursor.fetchall()
 
-# Thêm dữ liệu vào bảng Person
-cursor.execute('INSERT INTO Person (ID, Name) VALUES (?, ?)', (user_id, user_name))
-
-# Lưu (commit) thay đổi vào cơ sở dữ liệu
-conn.commit()
+# In ra dữ liệu
+for row in rows:
+    print(row)
+    
 
 # Đóng kết nối
-conn.close()
+ketNoiData.close()
